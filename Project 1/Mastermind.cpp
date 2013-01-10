@@ -2,33 +2,33 @@
 #include <vector>
 using namespace std;
 
-class Mastermind {
+class code {
    public:
-       Mastermind(int n, int m);
+       code(int n, int m);
        void print() const;
        int checkCorrect() const;
     private:
-        vector<int> code;
+        vector<int> data;
         int n, m;
 };
 
-Mastermind::Mastermind(int newN, int newM) {
+code::code(int newN, int newM) {
     n = newN;
     m = newM;
     srand (time(NULL));
-    code = vector<int>(n);
+    data = vector<int>(n);
     for(int i = 0; i < n; i++) {
-        code[i] = rand() % m;
+        data[i] = rand() % m;
     }
 }
-int Mastermind::checkCorrect(vector<int> guess) const {
+int code::checkCorrect(vector<int> guess) const {
     return 0;
 }
 
-void Mastermind::print() const {
-    cout << "code:" << endl;
-    for(unsigned int i = 0; i < code.size(); i++) {
-        cout << code[i] << " ";
+void code::print() const {
+    cout << "data:" << endl;
+    for(unsigned int i = 0; i < data.size(); i++) {
+        cout << data[i] << " ";
     }
     cout << endl;
 }
