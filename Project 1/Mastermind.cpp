@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 
 class Mastermind {
@@ -7,7 +8,7 @@ class Mastermind {
        void print() const;
        int checkCorrect() const;
     private:
-        int* code;
+        vector<int> code;
         int n, m;
 };
 
@@ -15,18 +16,18 @@ Mastermind::Mastermind(int newN, int newM) {
     n = newN;
     m = newM;
     srand (time(NULL));
-    code = new int[n];
+    code = vector<int>(n);
     for(int i = 0; i < n; i++) {
         code[i] = rand() % m;
     }
 }
-int Mastermind::checkCorrect() const {
+int Mastermind::checkCorrect(vector<int> guess) const {
     return 0;
 }
 
 void Mastermind::print() const {
     cout << "code:" << endl;
-    for(int i = 0; i < n; i++) {
+    for(unsigned int i = 0; i < code.size(); i++) {
         cout << code[i] << " ";
     }
     cout << endl;
