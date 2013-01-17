@@ -11,19 +11,17 @@ class code {
        int checkCorrect(vector<int> guess) const;
        int checkIncorrect(vector<int> guess) const;
        friend ostream& operator<<(ostream &out, code c);
+       int size() const;
     private:
         vector<int> data;
-        int n, m;
 };
 
 // Constructor
 // Initializes a new code with n digits in length and 0-m as possible digits
-code::code(int newN, int newM) {
-    n = newN;
-    m = newM;
+code::code(int n, int m) {
     srand (time(NULL));
     data = vector<int>(n);
-    for(int i = 0; i < n; i++) {
+    for(unsigned int i = 0; i < data.size(); i++) {
         data[i] = rand() % m;
     }
 }
@@ -31,7 +29,7 @@ code::code(int newN, int newM) {
 // Checks the user's guess and returns the number of spots that are correct
 int code::checkCorrect(vector<int> guess) const {
     int numCorrect = 0;
-    for(int i = 0; i < n; i++) {
+    for(unsigned int i = 0; i < data.size(); i++) {
         if(data[i] == guess[i]) {
             numCorrect++;
         }
@@ -43,11 +41,11 @@ int code::checkCorrect(vector<int> guess) const {
 int code::checkIncorrect(vector<int> guess) const {
     int numMisplaced = 0;
     vector<int> dataCopy = data;
-    for(int i = 0; i < n; i++) {
+    for(unsigned int i = 0; i < data.size(); i++) {
         if(dataCopy[i] == guess[i]) {
             dataCopy[i] = -1;
         }
-        for(int j = 0; j < n; j++) {
+        for(unsigned int j = 0; j < data.size(); j++) {
             if(i != j && dataCopy[i] == guess[j]) {
                 numMisplaced++;
                 dataCopy[i] = -1;
@@ -57,16 +55,20 @@ int code::checkIncorrect(vector<int> guess) const {
     return numMisplaced;
 }
 
-// Prints the code
-ostream& operator<<(ostream &out, code c){
-    out << c.data;
+int code::size() const {
+    return data.size();
+}
+
+template <class T>
+ostream& operator<<(ostream &out, const vector<T> v) {
+    for (unsigned int i = 0; i < v.size(); i++){
+        out << v[i] << " ";
+    }
     return out;
 }
 
-template <class T>;
-ostream& operator<<(ostream &out, vector<T> v) {
-    for unsigned int i = 0; i < v.size(); i++){
-        out << v[i] << " ";
-    }
+// Prints the code
+ostream& operator<<(ostream &out, const code c){
+    out << c.data;
     return out;
 }
