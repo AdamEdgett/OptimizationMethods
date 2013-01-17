@@ -14,7 +14,7 @@ int main () {
     cout << "Enter the range of digits (<=10)" << endl;
     cin >> m;
     code master (n, m);
-    master.print();
+    cout << "Answer: " << master << endl;
     
     // Prompt user for guesses
     for(int i = 0; i < 4; i++) {
@@ -30,6 +30,9 @@ int main () {
             return 0;
         } else {
             cout << "You got " << result << " correct" << endl;
+            int misplaced = master.checkIncorrect(guess);
+            cout << "You got " << misplaced;
+            cout << " correct in the incorrect places" << endl;
         }
     }
 }
