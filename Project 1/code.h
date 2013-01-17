@@ -39,19 +39,26 @@ int code::checkCorrect(vector<int> guess) const {
 
 //Check for correct digits in the incorrect place
 int code::checkIncorrect(vector<int> guess) const {
-    int numMisplaced = 0;
-    vector<int> dataCopy = data;
-    for(unsigned int i = 0; i < data.size(); i++) {
-        if(dataCopy[i] == guess[i]) {
-            dataCopy[i] = -1;
-        }
-        for(unsigned int j = 0; j < data.size(); j++) {
-            if(i != j && dataCopy[i] == guess[j]) {
-                numMisplaced++;
-                dataCopy[i] = -1;
-            }
-        }
-    }
+    int numMisplaced = 0; //Start at zero
+    vector<int> dataCopy = data; //Make copy of the secret code that we can change
+	vector<int> guessCopy = guess; //Make copy of the guess that we can change
+	for(unsigned int i = 0; i < data.size(); i++) { //Remove values that match
+	  	if(dataCopy[i] == guessCopy[i]) {
+            dataCopy[i] = -1; //Change the code value at i to -1 so that it won't be considered in the number misplaced counter
+			guessCopy[i] = -1; //Change the guess value at i to -1 for the same reason
+	    }
+	}
+    for (unsigned int i = 0; i < data.size(); i++) { //Go through dataCopy, and stop to look for a misplaced value at all indices whose values !=-1
+		if (dataCopy[i] != -1) {
+	  	 	for(unsigned int j = 0; j < data.size(); j++) { //Iterate through guess and see if there are misplaced values
+	           if(dataCopy[i] == guessCopy[j]) { //If there is one misplaced
+	               	numMisplaced++;
+					dataCopy[i] = -1; //flag both so they're not longer considered
+					guessCopy[i] = -1;
+		        }
+			}
+		}
+  	}
     return numMisplaced;
 }
 
