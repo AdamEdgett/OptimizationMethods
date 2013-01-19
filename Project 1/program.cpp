@@ -1,6 +1,7 @@
 // Adam Edgett & Dan Nordness
 // Project 1
 // program.cpp
+#include <cstdlib>
 #include "mastermind.h"
 using namespace std;
 
