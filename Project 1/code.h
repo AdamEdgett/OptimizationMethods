@@ -3,6 +3,7 @@
 // code.h
 #include <iostream>
 #include <vector>
+#include "d_except.h"
 using namespace std;
 
 class code {
@@ -43,6 +44,9 @@ ostream& operator<<(ostream &out, const code c) {
 
 // Checks the user's guess and returns the number of spots that are correct
 int code::checkCorrect(vector<int> guess) const {
+    if(guess.size() != data.size()) {
+        throw rangeError("Invalid number of guesses");
+    }
     int numCorrect = 0;
     for(unsigned int i = 0; i < data.size(); i++) {
         if(data[i] == guess[i]) {
@@ -54,6 +58,9 @@ int code::checkCorrect(vector<int> guess) const {
 
 //Check for correct digits in the incorrect place
 int code::checkIncorrect(vector<int> guess) const {
+    if(guess.size() != data.size()) {
+        throw rangeError("Invalid number of guesses");
+    }
     int numMisplaced = 0; //Start at zero
     vector<int> dataCopy = data; //Make copy of the secret code that we can change
 	vector<int> guessCopy = guess; //Make copy of the guess that we can change

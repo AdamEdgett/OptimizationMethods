@@ -2,6 +2,7 @@
 // Project 1
 // mastermind.h
 #include "code.h"
+#include "d_except.h"
 using namespace std;
 
 class mastermind {
@@ -29,6 +30,9 @@ void mastermind::play() const {
         cout << "Enter a guess" << endl;
         for(unsigned int i = 0; i < guess.size(); i++) {
             cin >> guess[i];
+            if(cin.fail()) { // Verify input was cast and stored correctly
+                throw baseException("Invalid input: non-digit");
+            }
         }
         int correct = answer.checkCorrect(guess);
         // Check this guess
