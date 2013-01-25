@@ -1,16 +1,15 @@
 using namespace std;
 
-const string suits[] = {"club", "diamond", "heart", "spade"};
+const string suits[4] = {"club", "diamond", "heart", "spade"};
 const string values[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace"};
 class card {
     public:
-        card(int value, int suit);
+        card(int value = 0, int suit = 0);
         int getValue();
         void setValue(int value);
         int getSuit();
         void setSuit(int suit);
         friend ostream& operator<<(ostream &out, card c);
-        
     private:
         int value;
         int suit;        
