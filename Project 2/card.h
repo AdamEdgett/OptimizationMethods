@@ -1,7 +1,7 @@
-using namespace std;
-
-const string suits[4] = {"club", "diamond", "heart", "spade"};
-const string values[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace"};
+#include <string> 
+#include <iostream> 
+const std::string suits[4] = {"club", "diamond", "heart", "spade"};
+const std::string values[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace"};
 class card {
     public:
         card(int value = 0, int suit = 0);
@@ -9,7 +9,7 @@ class card {
         void setValue(int value);
         int getSuit();
         void setSuit(int suit);
-        friend ostream& operator<<(ostream &out, card c);
+        friend std::ostream& operator<<(std::ostream &out, card c);
     private:
         int value;
         int suit;        
@@ -41,7 +41,7 @@ void card::setSuit(int newSuit) {
 }
 
 // Outstream operator
-ostream& operator<<(ostream &out, const card c) {
+std::ostream& operator<<(std::ostream &out, const card c) {
     out << values[c.value] << " of " << suits[c.suit];
     return out;
 }
