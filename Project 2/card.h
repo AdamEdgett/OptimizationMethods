@@ -1,7 +1,9 @@
 #include <string> 
 #include <iostream> 
+#include "d_except.h"
 const std::string suits[4] = {"club", "diamond", "heart", "spade"};
 const std::string values[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace"};
+
 class card {
     public:
         card(int value = 0, int suit = 0);
@@ -23,13 +25,16 @@ card::card(int newValue, int newSuit) {
 }
 
 // Geters and seters
-
 int card::getValue() {
     return value;
 }
 
 void card::setValue(int newValue) {
-    value = newValue;
+    if(newValue < 0 || newValue > 12) {
+        throw rangeError("Invalid card value");
+    } else {
+        value = newValue;
+    }
 }
 
 int card::getSuit() {
@@ -37,7 +42,11 @@ int card::getSuit() {
 }
 
 void card::setSuit(int newSuit) {
-    suit = newSuit;
+    if(newSuit < 0 || newSuit > 3) {
+        throw rangeError("Invalid card suit");
+    } else {        
+        suit = newSuit;
+    }
 }
 
 // Outstream operator

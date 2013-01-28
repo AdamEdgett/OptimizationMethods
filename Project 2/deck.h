@@ -27,8 +27,10 @@ deck::deck() {
             card currentCard(i, j);
             node<card>* currentNode = new node<card>(currentCard);
             if(i == 0 && j == 0) {
-                first = currentNode; // set as first
+                // set as first card of the deck
+                first = currentNode;
             } else {
+                // set as the next card of the previous card
                 prevNode->next = currentNode;
             }
             prevNode = currentNode;
