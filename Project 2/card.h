@@ -7,14 +7,16 @@ const std::string values[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "jac
 class card {
     public:
         card(int value = 0, int suit = 0);
+        card(const card& c);
         int getValue();
         void setValue(int value);
         int getSuit();
         void setSuit(int suit);
+        card& operator=(const card& c);
         friend std::ostream& operator<<(std::ostream &out, card c);
     private:
         int value;
-        int suit;        
+        int suit;
 };
 
 // Constructor
@@ -22,6 +24,11 @@ class card {
 card::card(int newValue, int newSuit) {
     setValue(newValue);
     setSuit(newSuit);
+}
+// Copy constructor
+card::card(const card& c) {
+    setValue(c.value);
+    setSuit(c.suit);
 }
 
 // Geters and seters
@@ -47,6 +54,13 @@ void card::setSuit(int newSuit) {
     } else {        
         suit = newSuit;
     }
+}
+
+// Assignment operator
+card& card::operator=(const card& c) {
+    setValue(c.value);
+    setSuit(c.suit);
+    return *this;
 }
 
 // Outstream operator
