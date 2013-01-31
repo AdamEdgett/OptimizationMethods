@@ -8,6 +8,7 @@
 class deck {
     public:
         deck();
+        ~deck();
         node<card>* getFirst();
         void setFirst(node<card>* newFirst);
         friend std::ostream& operator<<(std::ostream& out, deck d);
@@ -36,9 +37,16 @@ deck::deck() {
             prevNode = currentNode;
         }
     }
+}
 
-
-            
+// Destructor
+deck::~deck() {
+    node<card>* currentNode = getFirst();
+    while(currentNode != NULL) {
+        node<card>* nextNode = currentNode->next;
+        delete currentNode;
+        currentNode = nextNode;
+    }
 }
 
 // Getters and setters for private variables
