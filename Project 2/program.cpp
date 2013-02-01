@@ -7,6 +7,11 @@ int main() {
     try {
         deck d;
         cout << d << "\n";
+        cout << "\n";
+        card firstCard = d.deal();
+        cout << firstCard << endl;
+        //d.replace(firstCard);
+        cout << d << endl;
     } catch (rangeError e) {
         cout << "There was an error when running the game:\n";
         cout << e.what() << "\n";
