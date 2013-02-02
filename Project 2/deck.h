@@ -14,6 +14,7 @@ class deck {
         friend std::ostream& operator<<(std::ostream& out, deck& d);
         card deal();
         void replace(card c);
+        void shuffle();
     private:
         node<card>* first;
 };
@@ -86,4 +87,30 @@ void deck::replace(card c) {
         currentNode = currentNode->next;
     }
     currentNode->next = newNode;
+}
+
+// Puts the card in a random order
+void deck::shuffle() {
+    // Seed a new random generator
+    srand (time(NULL));
+    
+    // Iterate through all the cards
+    node<card>* currentNode = first;
+    int currentIndex = 0;
+    while(currentNode) {
+        // Find a different card at a random index
+        node<card>* switchNode = currentNode;
+        int switchIndex = rand() % (52 - currentIndex);
+        for(int i = 0; i < switchIndex; i++) {
+            switchNode = switchNode->next;
+        }
+        // Switch the current card with the random card
+        card switchCard = switchNode->nodeValue;
+        switchNode->nodeValue = currentNode->nodeValue;
+        currentNode->nodeValue = switchCard;
+        
+        // Continue iterating
+        currentNode = currentNode->next;
+        currentIndex++;
+    }
 }
