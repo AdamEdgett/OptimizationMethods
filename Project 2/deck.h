@@ -72,6 +72,9 @@ std::ostream& operator<<(std::ostream &out, const deck d) {
 }
 
 card deck::deal() {
+    if(first == NULL) {
+        throw rangeError("No more cards left to deal");
+    }
     card topCard = first->nodeValue;
     setFirst(first->next);
     return topCard;
