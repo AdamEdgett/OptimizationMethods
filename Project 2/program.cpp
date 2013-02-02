@@ -26,13 +26,13 @@ int calculatePoints(card dealtCard, int points) {
 int playFlip() {
     // Initialize game
     deck d;
-    cout << d << "\n\n";
+    d.shuffle();
     int points = 0;
-    // d.shuffle();
     
     // Start dealing
     card dealtCard = d.deal();
     cout << "First card: " << dealtCard << "\n";
+    points = calculatePoints(dealtCard, points);
     cout << "Current score: " << points << "\n";
     cout << "Would you like to continue? (y/n) ";
     string response;

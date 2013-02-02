@@ -71,6 +71,7 @@ std::ostream& operator<<(std::ostream &out, deck& d) {
     return out;
 }
 
+// Returns (deals) the first card of the deck
 card deck::deal() {
     if(first == NULL) {
         throw rangeError("No more cards left to deal");
@@ -80,13 +81,14 @@ card deck::deal() {
     return topCard;
 }
 
+// Replaces the given card at the bottom of the deck
 void deck::replace(card c) {
     node<card>* newNode = new node<card>(c);
     node<card>* currentNode = first;
     while(currentNode->next) { // get to the last node
         currentNode = currentNode->next;
     }
-    currentNode->next = newNode;
+    currentNode->next = newNode; // insert the card at the end
 }
 
 // Puts the card in a random order
