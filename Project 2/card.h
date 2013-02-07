@@ -2,7 +2,7 @@
 #include <iostream> 
 #include "d_except.h"
 const std::string suits[4] = {"club", "diamond", "heart", "spade"};
-const std::string values[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace"};
+const std::string values[13] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace"};
 
 class card {
     public:

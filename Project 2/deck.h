@@ -11,7 +11,10 @@ class deck {
         ~deck();
         node<card>* getFirst();
         void setFirst(node<card>* newFirst);
-        friend std::ostream& operator<<(std::ostream& out, deck d);
+        friend std::ostream& operator<<(std::ostream& out, deck& d);
+        card deal();
+        void replace(card c);
+        void shuffle();
     private:
         node<card>* first;
 };
@@ -41,11 +44,11 @@ deck::deck() {
 
 // Destructor
 deck::~deck() {
-    node<card>* currentNode = getFirst();
-    while(currentNode != NULL) {
-        node<card>* nextNode = currentNode->next;
-        delete currentNode;
-        currentNode = nextNode;
+    node<card>* currentNode = first;
+    while(currentNode) {
+        node<card>* prevNode = currentNode;
+        currentNode = currentNode->next;
+        delete prevNode;
     }
 }
 
@@ -59,11 +62,57 @@ void deck::setFirst(node<card>* newFirst) {
 }
 
 // Outstream operator
-std::ostream& operator<<(std::ostream &out, const deck d) {
+std::ostream& operator<<(std::ostream &out, deck& d) {
     node<card>* currentNode = d.first;
     while(currentNode != NULL) {
         out << currentNode->nodeValue << "\n";
         currentNode = currentNode->next;
     }
     return out;
+}
+
+// Returns (deals) the first card of the deck
+card deck::deal() {
+    if(first == NULL) {
+        throw rangeError("No more cards left to deal");
+    }
+    card topCard = first->nodeValue;
+    setFirst(first->next);
+    return topCard;
+}
+
+// Replaces the given card at the bottom of the deck
+void deck::replace(card c) {
+    node<card>* newNode = new node<card>(c);
+    node<card>* currentNode = first;
+    while(currentNode->next) { // get to the last node
+        currentNode = currentNode->next;
+    }
+    currentNode->next = newNode; // insert the card at the end
+}
+
+// Puts the card in a random order
+void deck::shuffle() {
+    // Seed a new random generator
+    srand (time(NULL));
+    
+    // Iterate through all the cards
+    node<card>* currentNode = first;
+    int currentIndex = 0;
+    while(currentNode) {
+        // Find a different card at a random index
+        node<card>* switchNode = currentNode;
+        int switchIndex = rand() % (52 - currentIndex);
+        for(int i = 0; i < switchIndex; i++) {
+            switchNode = switchNode->next;
+        }
+        // Switch the current card with the random card
+        card switchCard = switchNode->nodeValue;
+        switchNode->nodeValue = currentNode->nodeValue;
+        currentNode->nodeValue = switchCard;
+        
+        // Continue iterating
+        currentNode = currentNode->next;
+        currentIndex++;
+    }
 }
