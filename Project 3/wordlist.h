@@ -11,11 +11,15 @@ class wordlist {
 		wordlist();
 		wordlist(string fn);
 		void readFile();
+		vector<string> * get_list();
 		string fname;
 	private:
 		vector<string> wlist;	
 };
-
+vector<string>* wordlist::get_list()
+{
+	return & wlist;
+}
 
 wordlist::wordlist():wlist(NULL) {
 	std::cout <<"Reading\n";

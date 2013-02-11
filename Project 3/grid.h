@@ -11,10 +11,17 @@ class grid{
 	public:
 		grid(string fname);
 		void readFile(string fname);
-	// private:
+		matrix<char> * get_matrix();
+	 private:
 		matrix<char> crossword;
 };
-	
+
+matrix<char> * grid::get_matrix()
+{
+	return &crossword;
+}	
+
+
 grid::grid(string fname)
 {
 	readFile(fname);
@@ -29,10 +36,6 @@ void grid::readFile(string fname)
 	if (!file) {
 		std::cout << "Can't open, Bro.\n";
 	}
-	// char dimChar[50];
-	// file.getline(dimChar,50);
-	// string dimString=dimChar;
-	// std::cout << dimString << "\n\n";
 	int width,height;
 	file >> width >> height;
 	crossword.resize(width,height);
