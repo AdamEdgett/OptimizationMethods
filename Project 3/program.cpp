@@ -28,9 +28,9 @@ string testSearch()
 	if (filename=="")
 	{
 		filename="input15";
+		cout << "You didn't enter a name so we chose input15 for you. \n";
 	}
 	return filename;
-
 }
 
 bool is_word(string s1, wordlist * w)
@@ -45,7 +45,7 @@ bool is_word(string s1, wordlist * w)
 		{
 		cout<<"Match! " << s1 << " = "<<s2<<"\n";
 		words.push_back(s1); //add to words vector.
-		return true; //Once a word is found, return true, so it doesn't look for more words starting with that letter.
+		return true; //Ogit nce a word is found, return true, so it doesn't look for more words starting with that letter.
 		}
 	}
 }
@@ -56,38 +56,38 @@ void getAllWords(grid * g,wordlist * w,int x_pos,int  y_pos){
 	{
 		for (int j=-1;j<2;j++)
 		{	
-			if (i==-1 && j==-1)
-				{
-					cout << "\nNorth West: \n";
-				}
-				if (i==-1 && j==0)
-				{
-					cout << "\nWest: \n";
-				}
-				if (i==-1 && j==1)
-				{
-					cout << "\nSouth West: \n";
-				}
-				if (i==0 && j==-1)
-				{
-					cout << "\nNorth: \n";
-				}
-				if (i==0 && j==1)
-				{
-					cout << "\nSouth: \n";
-				}
-				if (i==1 && j==-1)
-				{
-					cout << "\nNorth East: \n";
-				}
-				if (i==1 && j==0)
-				{
-					cout << "\nEast: \n";
-				}
-				if (i==1 && j==1)
-				{
-					cout << "\nSouth East: \n";
-				}
+			// if (i==-1 && j==-1)
+			// 	{
+			// 		cout << "\nNorth West: \n";
+			// 	}
+			// 	if (i==-1 && j==0)
+			// 	{
+			// 		cout << "\nWest: \n";
+			// 	}
+			// 	if (i==-1 && j==1)
+			// 	{
+			// 		cout << "\nSouth West: \n";
+			// 	}
+			// 	if (i==0 && j==-1)
+			// 	{
+			// 		cout << "\nNorth: \n";
+			// 	}
+			// 	if (i==0 && j==1)
+			// 	{
+			// 		cout << "\nSouth: \n";
+			// 	}
+			// 	if (i==1 && j==-1)
+			// 	{
+			// 		cout << "\nNorth East: \n";
+			// 	}
+			// 	if (i==1 && j==0)
+			// 	{
+			// 		cout << "\nEast: \n";
+			// 	}
+			// 	if (i==1 && j==1)
+			// 	{
+			// 		cout << "\nSouth East: \n";
+			// 	}
 			
 			string s; //String we'll be using to compare with the other strings.
 			for (int k=min_length-1;k<length;k++)  //From 4 to 14
@@ -117,7 +117,6 @@ void getAllWords(grid * g,wordlist * w,int x_pos,int  y_pos){
 			}
 		}
 	}
-	cout << "\n\n";
 }
 
 void findMatches(wordlist * w,  grid *g){
@@ -150,4 +149,6 @@ int main(void)
 	{
 		cout << words[i] <<"\n";
 	}
+
+	cout << "\n\nPLEASE NOTE\nWe did not count words that included words already discovered. For example, Northeastern appears in our word search but once the program discovers North it will not count northeast northeaster or northeastern as words. This was our concious choice, because we though it best in tune with how a crossword is done it can be easily ammended to include all words by changing the return of is_word to always be false.\n";
 }
