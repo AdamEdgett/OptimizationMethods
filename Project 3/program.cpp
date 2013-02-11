@@ -43,11 +43,12 @@ bool is_word(string s1, wordlist * w)
 		// cout <<"\nComparing '"<<s1<<"' with '"<<s2<<"'\n";
 		if (s2==s1)
 		{
-		cout<<"Match! " << s1 << " = "<<s2<<"\n";
-		words.push_back(s1); //add to words vector.
-		return true; //Once a word is found, return true, so it doesn't look for more words starting with that letter.
+		    cout<<"Match! " << s1 << " = "<<s2<<"\n";
+		    words.push_back(s1); //add to words vector.
+		    return true; //Once a word is found, return true, so it doesn't look for more words starting with that letter.
 		}
 	}
+    return false;
 }
 
 void getAllWords(grid * g,wordlist * w,int x_pos,int  y_pos){
@@ -146,7 +147,7 @@ int main(void)
 	
 
 	cout << "There are "<<words.size() << " words. \nThey are:\n";
-	for (int i=0;i<words.size();i++)
+	for (unsigned int i=0;i<words.size();i++)
 	{
 		cout << words[i] <<"\n";
 	}
