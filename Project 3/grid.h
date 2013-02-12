@@ -5,8 +5,6 @@
 using std::vector;
 using std::string;
 
-
-
 class grid{
 	public:
 		grid(string fname);
@@ -16,19 +14,16 @@ class grid{
 		matrix<char> crossword;
 };
 
-matrix<char> * grid::get_matrix()
-{
+matrix<char> * grid::get_matrix() {
 	return &crossword;
 }	
 
 
-grid::grid(string fname)
-{
+grid::grid(string fname) {
 	readFile(fname);
 }
 
-void grid::readFile(string fname)
-{
+void grid::readFile(string fname) {
 	std::cout <<"Reading in '"<<fname<<"'. \n";
 	std::fstream file;
 	
@@ -51,6 +46,4 @@ void grid::readFile(string fname)
 	//	std::cout << x <<"\n";
 	}
 	std::cout <<" The value at 5,4 is "<< crossword[5][4] <<"\n";
-
-
 }

@@ -4,8 +4,6 @@
 using std::vector;
 using std::string;
 
-
-
 class wordlist {
 	public:
 		wordlist();
@@ -16,8 +14,7 @@ class wordlist {
 	private:
 		vector<string> wlist;	
 };
-vector<string>* wordlist::get_list()
-{
+vector<string>* wordlist::get_list() {
 	return & wlist;
 }
 
