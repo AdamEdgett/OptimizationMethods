@@ -9,12 +9,13 @@ class wordlist {
 		wordlist();
 		wordlist(string fn);
 		void readFile();
-		vector<string> * get_list();
+		vector<string> * getList();
+        bool isWord(string word);
 		string fname;
 	private:
 		vector<string> wlist;	
 };
-vector<string>* wordlist::get_list() {
+vector<string>* wordlist::getList() {
 	return & wlist;
 }
 
@@ -53,4 +54,14 @@ void wordlist::readFile() {
 	std::cout << "The last word is "<<wlist.back()<<"\n";
 }
 
-
+bool wordlist::isWord(string word) {
+    int size=getList()->size();
+	for(int i=0; i < size; i++) {
+		//Get the string from the list at this index.
+		string testString=(*(getList()))[i];
+		if (word == testString) {
+		    return true; //Once a word is found, return true, so it doesn't look for more words starting with that letter.
+		}
+	}
+    return false;
+}

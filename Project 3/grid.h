@@ -9,12 +9,12 @@ class grid{
 	public:
 		grid(string fname);
 		void readFile(string fname);
-		matrix<char> * get_matrix();
+		matrix<char> * getMatrix();
 	 private:
 		matrix<char> crossword;
 };
 
-matrix<char> * grid::get_matrix() {
+matrix<char> * grid::getMatrix() {
 	return &crossword;
 }	
 
