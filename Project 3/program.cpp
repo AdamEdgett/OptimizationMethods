@@ -2,6 +2,7 @@
 #include <vector>
 #include "wordlist.h"
 #include "grid.h"
+#include "sorts.cpp"
 #include <cmath>
 
 using namespace std;
@@ -109,19 +110,18 @@ const char* stringToChar(string s) {
 }
 
 int main(void) {
-	wordlist * w=new wordlist;
-	grid * g=new grid(testSearch());
+    wordlist * w=new wordlist;
+    grid * g=new grid(testSearch());
     
-	max_size=g->getMatrix()->rows();
-	
+    max_size=g->getMatrix()->rows();
+ 
     
-	findMatches(w,g);
-	
+    findMatches(w,g);
     
-	cout << "There are "<<words.size() << " words. \nThey are:\n";
-	for (unsigned int i=0;i<words.size();i++) {
-		cout << words[i] <<"\n";
-	}
+    cout << "There are "<<words.size() << " words. \nThey are:\n";
+    for (unsigned int i=0;i<words.size();i++) {
+        cout << words[i] <<"\n";
+    }
     
-	cout << "\n\nPLEASE NOTE\nWe did not count words that included words already discovered. For example, Northeastern appears in our word search but once the program discovers North it will not count northeast northeaster or northeastern as words. This was our concious choice, because we though it best in tune with how a crossword is done it can be easily ammended to include all words by changing the return of is_word to always be false.\n";
+    cout << "\n\nPLEASE NOTE\nWe did not count words that included words already discovered. For example, Northeastern appears in our word search but once the program discovers North it will not count northeast northeaster or northeastern as words. This was our concious choice, because we though it best in tune with how a crossword is done it can be easily ammended to include all words by changing the return of is_word to always be false.\n";
 }
