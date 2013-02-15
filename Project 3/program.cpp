@@ -2,7 +2,6 @@
 #include <vector>
 #include "wordlist.h"
 #include "grid.h"
-#include "sorts.cpp"
 #include <cmath>
 
 using namespace std;
@@ -34,40 +33,7 @@ string testSearch() {
 void getAllWords(grid * g,wordlist * w,int x_pos,int  y_pos){
 	int length=g->getMatrix()->cols();
 	for (int i=-1;i<2;i++) {
-		for (int j=-1;j<2;j++) {	
-			// if (i==-1 && j==-1)
-			// 	{
-			// 		cout << "\nNorth West: \n";
-			// 	}
-			// 	if (i==-1 && j==0)
-			// 	{
-			// 		cout << "\nWest: \n";
-			// 	}
-			// 	if (i==-1 && j==1)
-			// 	{
-			// 		cout << "\nSouth West: \n";
-			// 	}
-			// 	if (i==0 && j==-1)
-			// 	{
-			// 		cout << "\nNorth: \n";
-			// 	}
-			// 	if (i==0 && j==1)
-			// 	{
-			// 		cout << "\nSouth: \n";
-			// 	}
-			// 	if (i==1 && j==-1)
-			// 	{
-			// 		cout << "\nNorth East: \n";
-			// 	}
-			// 	if (i==1 && j==0)
-			// 	{
-			// 		cout << "\nEast: \n";
-			// 	}
-			// 	if (i==1 && j==1)
-			// 	{
-			// 		cout << "\nSouth East: \n";
-			// 	}
-			
+        for (int j=-1;j<2;j++) {
 			string s; //String we'll be using to compare with the other strings.
 			for (int k=min_length-1;k<length;k++)  {//From 4 to 14
 				if (i!=0 || j!=0) {//Ignore case where the iterator doesn't move in either direction
@@ -82,10 +48,7 @@ void getAllWords(grid * g,wordlist * w,int x_pos,int  y_pos){
 					else {//Now we keep adding the next letter into the string
 						s+=*letter;
 					}
-					// cout << "The char is "<<*letter << " and the string is "<<s<<"\n";
-					
 					if (w->isWord(s)) {//is_word compares the string with all strings in the word list
-					    cout<<"Match! " << s <<"\n";
             		    words.push_back(s); //add to words vector.
 						k=max_size;
 					}
@@ -98,7 +61,6 @@ void getAllWords(grid * g,wordlist * w,int x_pos,int  y_pos){
 void findMatches(wordlist * w,  grid *g){
 	for (int i=0; i<g->getMatrix()->cols();i++) {
 		for (int j=0; j<g->getMatrix()->rows(); j++) {
-			cout<< "\nLetter = "<< (*(g->getMatrix()))[j][i]<<" at point "<<j<<","<<i<<"\n";
 			getAllWords(g,w,j,i);
 		}
 	}
@@ -118,6 +80,7 @@ int main(void) {
     
     findMatches(w,g);
     
+    cout << "\n";
     cout << "There are "<<words.size() << " words. \nThey are:\n";
     for (unsigned int i=0;i<words.size();i++) {
         cout << words[i] <<"\n";

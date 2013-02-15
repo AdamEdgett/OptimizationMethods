@@ -1,6 +1,7 @@
 #include <fstream>
 #include <istream>
 #include <iostream>
+#include "sorts.cpp"
 using std::vector;
 using std::string;
 
@@ -20,7 +21,6 @@ vector<string>* wordlist::getList() {
 }
 
 wordlist::wordlist():wlist(NULL) {
-	std::cout <<"Reading\n";
 	fname="wordlist";
 	readFile();
 }
@@ -49,19 +49,26 @@ void wordlist::readFile() {
 			wordCount++;
 		}
 	}
+    quicksort(wlist, 0, wlist.size() - 1);
+    //mergesort(wlist);
 	std::cout << "The word count is "<<wordCount<<" and the vector size is "<<wlist.size()<<"\n";
 	std::cout << "The first word is "<<wlist.front()<<"\n";
 	std::cout << "The last word is "<<wlist.back()<<"\n";
 }
 
+// Checks for the word using binary search
 bool wordlist::isWord(string word) {
     int size=getList()->size();
-	for(int i=0; i < size; i++) {
-		//Get the string from the list at this index.
-		string testString=(*(getList()))[i];
-		if (word == testString) {
-		    return true; //Once a word is found, return true, so it doesn't look for more words starting with that letter.
-		}
-	}
-    return false;
+    int beg = 0, end = size - 1;
+    while(beg <= end) {
+        int middle = int((beg + end)/2);
+        if(word.compare(wlist[middle]) < 0) {
+            end = middle - 1; // Contiue checking first half of list
+        } else if(word.compare(wlist[middle]) > 0) {
+            beg = middle + 1; // Continue checking second half of list
+        } else if(word.compare(wlist[middle]) == 0) {
+            return true; // Found the word
+        }
+    }
+    return false; // Word was not found
 }

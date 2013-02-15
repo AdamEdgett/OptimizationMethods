@@ -43,7 +43,5 @@ void grid::readFile(string fname) {
 		}
 		crossword[i][j]=x;
 		i++;
-	//	std::cout << x <<"\n";
 	}
-	std::cout <<" The value at 5,4 is "<< crossword[5][4] <<"\n";
 }
