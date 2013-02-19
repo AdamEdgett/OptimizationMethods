@@ -10,7 +10,7 @@ int min_length=5;
 int max_size;
 vector<string> words;
 
-
+//A mod function that actually works the way math should using negative numbers
 int mod(int number, int modulus) {
      int result = number % modulus;
      
@@ -18,7 +18,7 @@ int mod(int number, int modulus) {
      
      return result;
 }
-
+//Allows the user to select the grid to use
 string testSearch() {
 	string filename;
 	cout << "Please enter your file's name.\n";
@@ -29,7 +29,7 @@ string testSearch() {
 	}
 	return filename;
 }
-
+//Iterates through all directions at the point given.
 void getAllWords(grid * g,wordlist * w,int x_pos,int  y_pos){
 	int length=g->getMatrix()->cols();
 	for (int i=-1;i<2;i++) {
@@ -50,25 +50,19 @@ void getAllWords(grid * g,wordlist * w,int x_pos,int  y_pos){
 					}
 					if (w->isWord(s)) {//is_word compares the string with all strings in the word list
             		    words.push_back(s); //add to words vector.
-						k=max_size;
 					}
 				}
 			}
 		}
 	}
 }
-
+//Iterates through the grid.
 void findMatches(wordlist * w,  grid *g){
 	for (int i=0; i<g->getMatrix()->cols();i++) {
 		for (int j=0; j<g->getMatrix()->rows(); j++) {
 			getAllWords(g,w,j,i);
 		}
 	}
-}
-
-const char* stringToChar(string s) {
-	const char* c=s.c_str();
-	return c;
 }
 
 int main(void) {
@@ -85,6 +79,4 @@ int main(void) {
     for (unsigned int i=0;i<words.size();i++) {
         cout << words[i] <<"\n";
     }
-    
-    cout << "\n\nPLEASE NOTE\nWe did not count words that included words already discovered. For example, Northeastern appears in our word search but once the program discovers North it will not count northeast northeaster or northeastern as words. This was our concious choice, because we though it best in tune with how a crossword is done it can be easily ammended to include all words by changing the return of is_word to always be false.\n";
 }

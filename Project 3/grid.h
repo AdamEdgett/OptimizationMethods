@@ -13,16 +13,16 @@ class grid{
 	 private:
 		matrix<char> crossword;
 };
-
+//Returns address of the crossword
 matrix<char> * grid::getMatrix() {
 	return &crossword;
 }	
 
-
+//Constructs grid from filename
 grid::grid(string fname) {
 	readFile(fname);
 }
-
+//Reads in specified grid file
 void grid::readFile(string fname) {
 	std::cout <<"Reading in '"<<fname<<"'. \n";
 	std::fstream file;

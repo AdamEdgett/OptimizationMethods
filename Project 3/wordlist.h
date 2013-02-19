@@ -19,16 +19,17 @@ class wordlist {
 vector<string>* wordlist::getList() {
 	return & wlist;
 }
-
+//Default constructor with no filename;
 wordlist::wordlist():wlist(NULL) {
 	fname="wordlist";
 	readFile();
 }
+//With filename
 wordlist::wordlist(string fn):wlist(NULL) {
 	fname=fn;
 	readFile();
 }
-
+//Reads in the wordlist
 void wordlist::readFile() {
 	std::cout <<"Reading in '"<<fname<<"'. \n";
 	std::fstream file;
