@@ -35,6 +35,10 @@ class board
         bool isBlank(int, int);
         ValueType getCell(int, int);
         void setCell(int, int, ValueType);
+        void printConflicts();
+        void printCellConflicts(int, int);
+        void updateConflicts();
+        void updateCellConflicts(int x, int y);
     private:
 
         // The following matrices go from 1 to BoardSize in each
@@ -48,7 +52,62 @@ board::board(int sqSize)
 // Board constructor
 {
 }
+void board::printConflicts()
+{
 
+}
+
+void board::printCellConflicts(int x, int y)
+{
+}
+
+//This looks at a cell and determines if there are any conflicts with it in the row, column, or box
+void board::updateCellConflicts(int x, int y)
+{   //x is the h.index of the cell you're checking and y is the v.index
+    for (int i=1;i<value.rows();i++) //This checks the row
+        if (x!=i && getCell(i,y))
+            if(getCell(i,y) == getCell(x,y))
+            {
+                cout << "\nCol Conflict with "<<getCell(x,y)<<" (location: "<<x<<","<<y<<") with a "<<getCell(i,y)<<" at x="<<i<<" y="<<y<<".\n"; 
+            }
+    for (int i=1;i<value.cols();i++)//This checks the columns
+        if (y!=i && getCell(x,i))
+            if(getCell(x,i) == getCell(x,y))
+            {
+                cout << "\nRow Conflict with "<<getCell(x,y)<<" (location: "<<x<<","<<y<<") with a "<<getCell(x,i)<<" at x="<<x<<" y="<<i<<".\n"; 
+            }
+    int startX=x-((x-1)%3);
+    int startY=y-((y-1)%3);
+    cout <<"\n"<< getCell(startX,startY)<<"\n";
+    for (int i=0;i<3;i++) //This checks the box
+    {   int temp(startY);
+        for (int j=0;j<3;j++)
+        {
+            cout << getCell(startX,temp) << " ";
+            if (y!=temp && x!=startY && getCell(startX,temp))
+                if(getCell(startX,temp) == getCell(x,y))
+                {
+                    cout << "\nBox Conflict with "<<getCell(x,y)<<" (location: "<<x<<","<<y<<") with a "<<getCell(startX,temp)<<" at x="<<startX<<" y="<<temp<<".\n"; 
+                }
+            temp++;
+        }
+        cout <<"\n";
+        
+        startX++;
+    }
+}
+
+void board::updateConflicts()
+{
+    for (int i=1;i<value.rows();i++)
+        for (int j=1;j<value.rows();j++)
+        {
+            if (getCell(i,j))
+            {
+                updateCellConflicts(i,j);
+            }
+        }
+}
 void board::clear()
 {
 }
@@ -156,7 +215,7 @@ int main()
     ifstream fin;
    
     // Read the sample grid from the file.
-    string fileName = "sudoku1.txt";
+    string fileName = "sudoku2.txt";
 
     fin.open(fileName.c_str());
     if (!fin)
@@ -168,18 +227,19 @@ int main()
     try
     {
         board b1(SquareSize);
-
         while (fin && fin.peek() != 'Z')
         {
             b1.initialize(fin);
             b1.print();
             //b1.printConflicts();
         }
+        b1.updateConflicts();
     }
     catch  (indexRangeError &ex)
     {
         cout << ex.what() << endl;
         exit(1);
     }
+
 }
 
