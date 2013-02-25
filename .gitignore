@@ -14,7 +14,7 @@
 *.out
 *.exe
 *.core
-p4a
+p4
 *.pdf
 
 # OS Generated Files
