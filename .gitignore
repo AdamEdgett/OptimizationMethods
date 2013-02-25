@@ -12,6 +12,10 @@
 *.la
 *.a
 *.out
+*.exe
+*.core
+p4a
+*.pdf
 
 # OS Generated Files
 .DS_Store
