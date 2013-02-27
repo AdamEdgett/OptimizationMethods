@@ -13,3 +13,5 @@ Projects Included:
 * Project 2 - Value-based card game  
 
 * Project 3 - Word search solver
+
+* Project 4 - Sudoku solver
