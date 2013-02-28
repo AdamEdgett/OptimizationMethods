@@ -10,7 +10,7 @@
 using namespace std;
 
 typedef int ValueType; // The type of the value in a cell
-const int Blank = -1;  // Indicates that a cell is blank
+const int Blank = 0;  // Indicates that a cell is blank
  
 const int SquareSize = 3;  //  The number of cells in a small square
                            //  (usually 3).  The board has
@@ -99,7 +99,7 @@ void board::clear()
 {
     for (int i=1;i<value.rows();i++)
         for (int j=1;j<value.rows();j++)
-            setCell(i,j,0);
+            setCell(i,j,Blank);
 
 }
 void board::printConflicts()
@@ -171,7 +171,7 @@ void board::addValue(int x,int y,ValueType input)
 //This looks at a space, and checks if a conflict will be created.
 bool board::checkValue(int x,int y,ValueType input)
 {
-    if (rows[x][input]==0 || columns[y][input]==0 || squares[getSquareNumber(x,y)][input]==0)
+    if (rows[x][input] == false || columns[y][input] == false || squares[getSquareNumber(x,y)][input] == false)
     {
         cout << input << " will cause a conflict if it is placed at "<<x<<","<<y<<".\n";
         return false;
@@ -276,7 +276,7 @@ bool board::isBlank(int i, int j)
     if (i < 1 || i > BoardSize || j < 1 || j > BoardSize)
         throw rangeError("bad value in setCell");
     else
-        return !getCell(i,j);
+        return getCell(i,j) == Blank;
 }
 
 void board::print()
@@ -314,7 +314,7 @@ void board::print()
 //clears a cell
 void board::clearCell(int x, int y)
 {
-    setCell(x,y,0);
+    setCell(x,y,Blank);
     updateConflicts();
     printConflicts();
 }
@@ -326,7 +326,7 @@ bool board::solved()
         for (int y=1;y<value.cols();y++)
         {
             //if a value is blank it's not solved
-            if (!getCell(x,y))
+            if (isBlank(x,y))
                 return false;
             
             //iterate through the row to find duplicates
@@ -385,29 +385,28 @@ int main()
         {
             b1.initialize(fin);
             b1.print();
-            //b1.printConflicts();
-        }
 
-        //We first print the conflicts which have been updated upon board initilization:
-        cout << "\nBoard Initilized\n\n\n\n Printing Conflicts...\n";
-        b1.printConflicts();
-        //Then we check to see if we could put a value of 5 at 1, 2 (We Can)
-        cout << "\n\n\n\n\n\n\n\n\n\n\n\nChecking Value of 5 at 1,2\n\n";
-        b1.checkValue(1,2,5);
-        //Now one we know we cannot put there.
-        cout << "\n\n\n\n\n\n\n\n\n\n\n\nChecking Value of 3 at 1,2\n\n";
-        b1.checkValue(1,2,3);
-        //Now we add the five at 1,2
-        cout << "\n\n\n\n\n\n\n\n\n\n\n\nAdding Value of 5 at 1,2\n";
-        b1.addValue(1,2,5);
-        //Now we go ahead and clear it
-        cout << "\n\n\n\n\n\n\n\n\n\n\n\nClearing Value of 5 at 1,2\n";
-        b1.clearCell(1,2);
-        cout << "\n\n\nIs it solved?";
-        if (b1.solved()==false)
-            cout << "This puzzle is not solved\n";
-        else
-            cout << "This puzzle is solved\n";
+            //We first print the conflicts which have been updated upon board initilization:
+            cout << "\nBoard Initilized\n\n\n\n Printing Conflicts...\n";
+            b1.printConflicts();
+            //Then we check to see if we could put a value of 5 at 1, 2 (We Can)
+            cout << "\n\n\n\n\n\n\n\n\n\n\n\nBoarding Value of 5 at 1,2\n\n";
+            b1.checkValue(1,2,5);
+            //Now one we know we cannot put there.
+            cout << "\n\n\n\n\n\n\n\n\n\n\n\nChecking Value of 3 at 1,2\n\n";
+            b1.checkValue(1,2,3);
+            //Now we add the five at 1,2
+            cout << "\n\n\n\n\n\n\n\n\n\n\n\nAdding Value of 5 at 1,2\n";
+            b1.addValue(1,2,5);
+            //Now we go ahead and clear it
+            cout << "\n\n\n\n\n\n\n\n\n\n\n\nClearing Value of 5 at 1,2\n";
+            b1.clearCell(1,2);
+            cout << "\n\n\nIs it solved?\n";
+            if (b1.solved()==false)
+                cout << "This puzzle is not solved\n";
+            else
+                cout << "This puzzle is solved\n";
+        }
     }   
     catch  (indexRangeError &ex)
     {
