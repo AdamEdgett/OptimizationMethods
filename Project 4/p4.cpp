@@ -23,6 +23,7 @@ const int MinValue = 1;
 const int MaxValue = 9;
 
 int numSolutions = 0;
+int recursions = 0;
 
 //This is just a case check that returns the square number for a set of indexes as
 int getSquareNumber(int x,int y)
@@ -67,6 +68,9 @@ class board
         void printItemConflicts(int, string);
         void updateConflicts();
         bool solved();
+        void solve();
+        vector<int> getValidPlacements(int, int);
+        void findBlank(int&, int&);
         
         vector< vector<bool>  > columns;
         vector< vector<bool>  > rows;
@@ -162,7 +166,8 @@ void board::addValue(int x,int y,ValueType input)
     {
         setCell(x,y,input);
         updateConflicts();
-        printConflicts();
+        //printConflicts();
+        //print();
     }
     else 
         cout << "Did not set because doing so would cause a conflict.\n";
@@ -173,12 +178,12 @@ bool board::checkValue(int x,int y,ValueType input)
 {
     if (rows[x][input] == false || columns[y][input] == false || squares[getSquareNumber(x,y)][input] == false)
     {
-        cout << input << " will cause a conflict if it is placed at "<<x<<","<<y<<".\n";
+        //cout << input << " will cause a conflict if it is placed at "<<x<<","<<y<<".\n";
         return false;
     }
     else
     {
-        cout << input << " can be placed at without causing conflict "<<x<<","<<y<<".\n";
+        //cout << input << " can be placed at without causing conflict "<<x<<","<<y<<".\n";
         return true;
     }
 }
@@ -316,7 +321,8 @@ void board::clearCell(int x, int y)
 {
     setCell(x,y,Blank);
     updateConflicts();
-    printConflicts();
+    //printConflicts();
+    //print();
 }
 //Checks if the puzzle is solved
 bool board::solved()
@@ -364,49 +370,182 @@ bool board::solved()
         }
         return true;
 }
+
+// gets a vector of all possible placements at x, y
+vector<int> board::getValidPlacements(int x, int y)
+{
+    vector<int> placements;
+    int square = getSquareNumber(x, y);
+    // try every possibility from 1 to 9
+    for(unsigned int i = 0; i < rows.size(); i++)
+    {
+        // if no conflicts exist in the row, column, and square
+        if(rows[x][i] && columns[y][i] && squares[square][i])
+            // add it to the possible placements
+            placements.push_back(i);
+    }
+    return placements;
+}
+
+// finds the blank with the least number of possible placements
+void board::findBlank(int& x, int& y)
+{
+    unsigned int currentPlacements = 10;
+    int i = 1, j = 1;
+    // iterate through the board
+    while(i < value.rows() && j < value.cols())
+    {
+        // if the blank has less possibilties than the previously found blank
+        if(isBlank(i, j) && getValidPlacements(i, j).size() < currentPlacements)
+        {
+            // set the current blank
+            x = i;
+            y = j;
+            currentPlacements = getValidPlacements(i, j).size();
+            // 1 possibility is the best case we can find
+            if(currentPlacements == 1)
+                return;
+        }
+        // continue iteration
+        j++;
+        if(j >= value.cols()) {
+            i++;
+            j = 1;
+        }
+    }
+}
+
+// solves the board using a backtracking recursive algorithm
+void board::solve()
+{
+    if(solved())
+        return;
+    recursions++;
+    
+    // choose best blank
+    int x = 0, y = 0;
+    findBlank(x, y);
+    
+    // choose a valid fill-in
+    vector<int> placements = getValidPlacements(x, y);
+    for(unsigned int n = 0; n < placements.size(); n++)
+    {
+        // try the first possible placement
+        addValue(x, y, placements[n]);
+        // recurse
+        solve();
+        if(solved())
+        {
+            return;
+        }
+        else
+        {
+            // clear the cell and try the next iteration
+            clearCell(x, y);
+        }
+    }
+}
+
 int main()
 {
-    ifstream fin;
+    ifstream fin1, fin2, fin3;
    
     // Read the sample grid from the file.
-    string fileName = "sudoku1.txt";
+    string file1 = "sudoku1.txt";
+    string file2 = "sudoku2.txt";
+    string file3 = "sudoku3.txt";
 
-    fin.open(fileName.c_str());
-    if (!fin)
+    fin1.open(file1.c_str());
+    fin2.open(file2.c_str());
+    fin3.open(file3.c_str());
+    if(!fin1)
     {
-        cerr << "Cannot open " << fileName << endl;
+        cerr << "Cannot open " << file1 << endl;
+        exit(1);
+    }
+    if(!fin2)
+    {
+        cerr << "Cannot open " << file2 << endl;
+        exit(1);
+    }
+    if(!fin3)
+    {
+        cerr << "Cannot open " << file3 << endl;
         exit(1);
     }
 
     try
     {
+        int recursions1, recursions2, recursions3;
         board b1(SquareSize);
-        while (fin && fin.peek() != 'Z')
+        if(fin1 && fin1.peek() != 'Z')
         {
-            b1.initialize(fin);
-            b1.print();
-
+            cout << "Board 1\n";
+            b1.initialize(fin1);
             //We first print the conflicts which have been updated upon board initilization:
             cout << "\nBoard Initilized\n\n\n\n Printing Conflicts...\n";
             b1.printConflicts();
-            //Then we check to see if we could put a value of 5 at 1, 2 (We Can)
-            cout << "\n\n\n\n\n\n\n\n\n\n\n\nBoarding Value of 5 at 1,2\n\n";
-            b1.checkValue(1,2,5);
-            //Now one we know we cannot put there.
-            cout << "\n\n\n\n\n\n\n\n\n\n\n\nChecking Value of 3 at 1,2\n\n";
-            b1.checkValue(1,2,3);
-            //Now we add the five at 1,2
-            cout << "\n\n\n\n\n\n\n\n\n\n\n\nAdding Value of 5 at 1,2\n";
-            b1.addValue(1,2,5);
-            //Now we go ahead and clear it
-            cout << "\n\n\n\n\n\n\n\n\n\n\n\nClearing Value of 5 at 1,2\n";
-            b1.clearCell(1,2);
-            cout << "\n\n\nIs it solved?\n";
-            if (b1.solved()==false)
-                cout << "This puzzle is not solved\n";
+            cout << "=====================================================\n";
+            cout << "Board 1\n";
+            b1.print();
+            cout << "Solving...\n";
+            b1.solve();
+            if(b1.solved())
+            {
+                cout << "Solved in " << recursions << " recursions \n";
+                b1.print();
+                recursions1 = recursions;
+                recursions = 0;
+            }
             else
-                cout << "This puzzle is solved\n";
+            {
+                cout << "The puzzle could not be solved\n";
+            }
+            cout << "\n\n";
         }
+        if(fin2 && fin2.peek() != 'Z')
+        {
+            cout << "=====================================================\n";
+            cout << "Board 2\n";
+            b1.initialize(fin2);
+            b1.print();
+            cout << "Solving...\n";
+            b1.solve();
+            if(b1.solved())
+            {
+                cout << "Solved in " << recursions << " recursions \n";
+                b1.print();
+                recursions2 = recursions;
+                recursions = 0;
+            }
+            else
+            {
+                cout << "The puzzle could not be solved\n";
+            }
+            cout << "\n\n";
+        }
+        if(fin3 && fin3.peek() != 'Z')
+        {
+            cout << "=====================================================\n";
+            cout << "Board 3\n";
+            b1.initialize(fin3);
+            b1.print();
+            cout << "Solving...\n";
+            b1.solve();
+            if(b1.solved())
+            {
+                cout << "Solved in " << recursions << " recursions \n";
+                b1.print();
+                recursions3 = recursions;
+                recursions = 0;
+            }
+            else
+            {
+                cout << "The puzzle could not be solved\n";
+            }
+        }
+        cout << "\n\nAverage number of recursions: ";
+        cout << ((recursions1 + recursions2 + recursions3)/3);
     }   
     catch  (indexRangeError &ex)
     {
