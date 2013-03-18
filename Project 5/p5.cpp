@@ -1,4 +1,4 @@
-   // Project 5
+// Project 5
 
 #include <iostream>
 #include <limits.h>
@@ -32,6 +32,7 @@ class maze
       matrix<int> nodeNumbers;
       void findPathRecursive(graph &g,int);
       void findPathNonRecursive(graph &g,int);
+      void findPathNonRecursive_(graph &g,int);
       string getDirection(int i, int j);
       bool solved;
       void printDirections();
@@ -261,66 +262,69 @@ void maze::findPathRecursive(graph &g,int nodeNumber)
 
 void maze::findPathNonRecursive(graph &g,int nodeNumber)
 {
-   vector<int> directions;
+   //Stores the Iterator Stack
    vector<int> nodes;
+
+   //Stores the nodes visited, will be resized if a path is found to be a dead end, this will contain the solution to the maze in the end
+   vector<int> nodesVisited;
+
+   //Stack in paralell with the nodes stack that holds the size of the nodesVisited vector at a node
+   //When we encounter a dead end, we pop back to the start of the dead end path and resize our nodesVisited thus removing all the dead end nodes from the nodesVisited stack
+   vector<int> sizes;
    
+   //Push our starting values
    nodes.push_back(nodeNumber);
-   directions.push_back(0);
+   sizes.push_back(0);
+   
+   //Used to capture coordinates from node
    int x[2];
    int node;
    solved=0;
+   //While the nodes stack isn't empty and the maze isn't solved
    while (!nodes.empty() && !solved)
-   {
-      //Print Stack for Debugging
-      for (int i=nodes.size()-1;i>-1;i--)
-         cout << "\nNode: " <<nodes[i] << " Directions: "<<directions[i];
-      
-      //Get the new node
+   {  
+      //Resize nodesVisited to remove any bad nodes (dead ends)
+      nodesVisited.resize(sizes.back());
+
+      //get next node to try from stack and visit it and put it into nodes visited
       node=nodes.back();
-      //Resizing Correct Moves Vector to store Correct Path
-      string temp;
-      bool fix=directions.back() + 1 != correctMoves.size();
-
-      if(!correctMoves.empty())
-      {
-         temp=correctMoves.back();
-         correctMoves.resize(directions.back() + 1);
-      }   
-      
-      if (!correctMoves.empty() && fix)
-         correctMoves.back()=temp;
-
-      //Visit the new node
       g.visit(node);
+      nodesVisited.push_back(node);
       
-      //Pop the new node off the stack
+      //Pop the size and node off the stacks since they've now been visited
       nodes.pop_back();
-      directions.pop_back();
+      sizes.pop_back();
       
-      //Check if solved
+      //Check solved
       coordinatesFromNodeNumber(node,x);
-
+      
       if (x[0]==rows-1 && x[1]==cols-1)
       {
-         cout << "\nSolved!\n\n";
          solved=1;
+         int i=0;
+         do
+         {
+            //Print Path
+            coordinatesFromNodeNumber(nodesVisited[i],x);
+            print(x[0],x[1],rows-1,cols-1);
+            //Fill in moves
+            correctMoves.push_back(getDirection(nodesVisited[i],nodesVisited[i+1]));
+            i++;
+         }
+         while (i+1!=nodesVisited.size());
          checkDirections();
          printDirections();
+         cout << "\nSolved!\n\n";
          return;
       }   
 
-      
       //Push next node options into stack
       for (int i=0;i<g.numNodes();i++)
          if (g.isEdge(node,i) && !g.isVisited(i))
             {
                nodes.push_back(i);
-               directions.push_back(correctMoves.size());
+               sizes.push_back(nodesVisited.size());
             }
-      
-      //Push move into correct moves
-      correctMoves.push_back(getDirection(node,nodes.back()));
-      print(x[0],x[1],rows-1,cols-1);
    }
    
    if (!solved)
@@ -382,6 +386,8 @@ int main()
 
    try
    {
+      bool recursiveSolved=false;
+      bool nonRecursiveSolved=false;
       graph g;
       while (fin && fin.peek() != 'Z')
       {
@@ -390,9 +396,23 @@ int main()
          m.findPathRecursive(g,0);
          if (!m.solved)
             cout << "No Solution Found Using Recursive Algorithm\n";
+         else
+            recursiveSolved=true;
          m.reset(g);
          m.findPathNonRecursive(g,0);
-        
+         if (m.solved)
+            nonRecursiveSolved=true;
+         m.reset(g);
+
+         if (recursiveSolved && nonRecursiveSolved)
+            cout <<"\nFound solutions using both recursive and non-recursive algorithms.";
+         else if (!recursiveSolved && nonRecursiveSolved)
+            cout <<"\nFound solutions using non-recursive algorithm but not with recursive algorithm.";
+         else if (recursiveSolved && !nonRecursiveSolved)
+            cout <<"\nFound solutions using recursive algorithm but not with non-recursive algorithm.";
+         else
+            cout << "\nNo solutions found with either algorithm.";
+         
       }
    } 
    catch (indexRangeError &ex) 
