@@ -2,9 +2,10 @@
 
 #include <iostream>
 #include <limits.h>
-#include "d_except.h"
 #include <list>
 #include <fstream>
+#include <queue>
+#include "d_except.h"
 #include "d_matrix.h"
 #include "graph.h"
 
@@ -32,7 +33,8 @@ class maze
       matrix<int> nodeNumbers;
       void findPathRecursive(graph &g,int);
       void findPathNonRecursive(graph &g,int);
-      void findPathNonRecursive_(graph &g,int);
+      bool findShortestPath1(graph &g, int);
+      bool findShortestPath2(graph &g, int);
       string getDirection(int i, int j);
       bool solved;
       void printDirections();
@@ -40,6 +42,7 @@ class maze
       void reset(graph &g);
    private:
       vector<string> correctMoves;
+      vector<string> shortestPath;
       int rows; // number of rows in the maze
       int cols; // number of columns in the maze
       matrix<bool> value;
@@ -141,8 +144,6 @@ bool maze::isLegal(int i, int j)
 void maze::mapMazeToGraph(graph &g)
 // Create a graph g that represents the legal moves in the maze m.
 {
-   //matrix<int> nodeNumbers(numRows(),numCols(),0); //This will be how we look up a node number from coordinates
- 
    int iNew;
    int jNew;
    //This loop adds the nodes, and 
@@ -162,10 +163,12 @@ void maze::mapMazeToGraph(graph &g)
                {
                   iNew=i+iAdd[k];
                   jNew=j+jAdd[k];
-                  if (iNew > -1 && jNew > -1 && iNew < numRows() && jNew < numCols() && isLegal(iNew,jNew))
+                  if (iNew > -1 && jNew > -1 
+                     && iNew < numRows() && jNew < numCols() && isLegal(iNew,jNew))
                   //If the surrounding index is within the bounds of the matrix and there is a legal move
                   {
-                     g.addEdge(nodeNumberFromCoordinates(i,j),nodeNumberFromCoordinates(iNew,jNew));
+                     g.addEdge(nodeNumberFromCoordinates(i,j),
+                        nodeNumberFromCoordinates(iNew,jNew));
                   }
                }
          }
@@ -229,7 +232,7 @@ void maze::findPathRecursive(graph &g,int nodeNumber)
    //If it's the goal node, we're done.
    if (x[0]==rows-1 && x[1]==cols-1)
    {
-      cout << "Solved!\n";
+      cout << "Solved in " << correctMoves.size() << "\n";
       solved=1;
       checkDirections();
       printDirections();
@@ -250,7 +253,7 @@ void maze::findPathRecursive(graph &g,int nodeNumber)
 
    for (int i=0;i<nodesCanVisit.size();i++)
    {
-      cout << nodesCanVisit[i] <<" ";
+      cout << "Nodes can visit: " << nodesCanVisit[i] <<" ";
       correctMoves.push_back(getDirection(nodeNumber,nodesCanVisit[i]));
       findPathRecursive(g,nodesCanVisit[i]);
        //Once a solution is found, stop searching for more.
@@ -265,11 +268,13 @@ void maze::findPathNonRecursive(graph &g,int nodeNumber)
    //Stores the Iterator Stack
    vector<int> nodes;
 
-   //Stores the nodes visited, will be resized if a path is found to be a dead end, this will contain the solution to the maze in the end
+   //Stores the nodes visited, will be resized if a path is found to be a dead end
+   //this will contain the solution to the maze in the end
    vector<int> nodesVisited;
 
    //Stack in paralell with the nodes stack that holds the size of the nodesVisited vector at a node
-   //When we encounter a dead end, we pop back to the start of the dead end path and resize our nodesVisited thus removing all the dead end nodes from the nodesVisited stack
+   //When we encounter a dead end, we pop back to the start of the dead end path
+   //and resize our nodesVisited thus removing all the dead end nodes from the nodesVisited stack
    vector<int> sizes;
    
    //Push our starting values
@@ -331,6 +336,79 @@ void maze::findPathNonRecursive(graph &g,int nodeNumber)
       cout << "No Solution Found Using Non-Recursive Model";
 }
 
+// finds the shortest solution using depth first search
+bool maze::findShortestPath1(graph& g, int nodeNumber)
+{
+   g.visit(nodeNumber);
+   int x[2];
+   coordinatesFromNodeNumber(nodeNumber,x);
+   print(x[0],x[1],rows-1,cols-1);
+
+   //If it's the goal node, we're done.
+   if (x[0]==rows-1 && x[1]==cols-1)
+   {
+      cout << "Solved in " << correctMoves.size() << " moves\n";
+      solved = true;
+      if(shortestPath.size() == 0 || correctMoves.size() < shortestPath.size())
+      {
+         cout << "Found new shortest solution" << "\n";
+         shortestPath = correctMoves;
+      }
+      checkDirections();
+      printDirections();
+      print(x[0],x[1],rows-1,cols-1);
+   }   
+
+   //Populate a list of nodes that can be visited
+   for (int i=0;i<g.numNodes();i++)
+   {
+      if (g.isEdge(nodeNumber,i) && !g.isVisited(i))
+      {
+         cout << i << " ";
+         correctMoves.push_back(getDirection(nodeNumber,i));
+         findShortestPath1(g,i);
+         correctMoves.pop_back();
+      }
+   }
+
+   g.unVisit(nodeNumber);
+   return solved;
+}
+
+// finds the shortest solution using breadth first search
+bool maze::findShortestPath2(graph& g, int nodeNumber)   
+{
+   queue<int> currentMoves;
+   g.visit(nodeNumber);
+   currentMoves.push(nodeNumber);
+   while(currentMoves.size() > 0)
+   {
+      int currentNode = currentMoves.front();
+      currentMoves.pop();
+      int x[2];
+      coordinatesFromNodeNumber(currentNode,x);
+      print(x[0],x[1],rows-1,cols-1);
+
+      //If it's the goal node, we're done.
+      if (x[0]==rows-1 && x[1]==cols-1)
+      {
+         solved = true;
+         return true;
+      }
+      //Populate a list of nodes that can be visited
+      for (int i=0;i<g.numNodes();i++)
+      {
+         if (g.isEdge(currentNode,i) && !g.isVisited(i))
+         {
+            cout << i <<" ";
+            g.visit(i);
+            currentMoves.push(i);
+         }
+      }
+   }
+   return false;
+}
+
 void maze::printDirections()
 {
    for (int i=0;i<correctMoves.size();i++)
@@ -364,6 +442,7 @@ void maze::checkDirections()
 void maze::reset(graph &g)
 {
    correctMoves.clear();
+   shortestPath.clear();
    solved=0;
    g.clearVisit();
 
@@ -393,25 +472,27 @@ int main()
       {
          maze m(fin);
          m.mapMazeToGraph(g);
-         m.findPathRecursive(g,0);
+         cout << "\n\n";
+         cout << "Finding solution using Depth-First Search\n";
+         m.findShortestPath1(g,0);
          if (!m.solved)
-            cout << "No Solution Found Using Recursive Algorithm\n";
-         else
-            recursiveSolved=true;
+            cout << "No Solution Found Using Depth-First Search\n";
          m.reset(g);
-         m.findPathNonRecursive(g,0);
-         if (m.solved)
-            nonRecursiveSolved=true;
+         cout << "\n\n";
+         cout << "Finding solution using Breadth-First Search\n";
+         m.findShortestPath2(g,0);
+         if (!m.solved)
+            cout << "No Solution Found Using Breadth-First Search\n";
          m.reset(g);
 
-         if (recursiveSolved && nonRecursiveSolved)
-            cout <<"\nFound solutions using both recursive and non-recursive algorithms.";
-         else if (!recursiveSolved && nonRecursiveSolved)
-            cout <<"\nFound solutions using non-recursive algorithm but not with recursive algorithm.";
-         else if (recursiveSolved && !nonRecursiveSolved)
-            cout <<"\nFound solutions using recursive algorithm but not with non-recursive algorithm.";
-         else
-            cout << "\nNo solutions found with either algorithm.";
+         // if (recursiveSolved && nonRecursiveSolved)
+         //    cout <<"\nFound solutions using both recursive and non-recursive algorithms.";
+         // else if (!recursiveSolved && nonRecursiveSolved)
+         //    cout <<"\nFound solutions using non-recursive algorithm but not with recursive algorithm.";
+         // else if (recursiveSolved && !nonRecursiveSolved)
+         //    cout <<"\nFound solutions using recursive algorithm but not with non-recursive algorithm.";
+         // else
+         //    cout << "\nNo solutions found with either algorithm.";
          
       }
    } 
