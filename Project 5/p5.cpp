@@ -400,6 +400,7 @@ bool maze::findShortestPath2(graph& g, int nodeNumber)
       {
          if (g.isEdge(currentNode,i) && !g.isVisited(i))
          {
+            
             cout << i <<" ";
             g.visit(i);
             currentMoves.push(i);
