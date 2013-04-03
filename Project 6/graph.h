@@ -364,7 +364,6 @@ ostream &operator<<(ostream &ostr, const edge &e)
 class graph
 {
   public:
-   int numComponents;
    graph();
    graph(int n);
    graph(ifstream &fin);

@@ -15,6 +15,8 @@
 
 using namespace std;
 
+int numComponents;
+
 int const NONE = -1;  // Used to represent a node that does not exist
 
 bool isCyclic(graph &g,int nodeNumber)
@@ -42,13 +44,13 @@ void findSpanningForest(graph &g, graph &sf)
 {
    g.clearMark();
    g.clearVisit();
-   g.numComponents=0;
+   numComponents=0;
    queue<int> currentMoves;
    for (int n=0;n<g.numNodes();n++)
    {
       if (!g.isVisited(n))
       {  
-         g.numComponents++;
+         numComponents++;
          int nodeNumber=n;
          g.visit(nodeNumber);
          currentMoves.push(nodeNumber);
@@ -64,7 +66,6 @@ void findSpanningForest(graph &g, graph &sf)
                {
                   g.mark(currentNode,i);
                   sf.addEdge(currentNode,i);
-                  cout << i <<" ";
                   g.visit(i);
                   currentMoves.push(i);
                }
@@ -72,7 +73,6 @@ void findSpanningForest(graph &g, graph &sf)
          }
       }
    }
-   cout << "\nThere are "<<g.numComponents<<" components or spanning trees.\nThe Original Graph: \n"<<g<<"\n";
 }
 
 
@@ -81,13 +81,13 @@ bool isConnected(graph &g)
 {
    g.clearMark();
    g.clearVisit();
-   g.numComponents=0;
+   numComponents=0;
    queue<int> currentMoves;
    for (int n=0;n<g.numNodes();n++)
    {
       if (!g.isVisited(n))
       {  
-         g.numComponents++;
+         numComponents++;
          int nodeNumber=n;
          g.visit(nodeNumber);
          currentMoves.push(nodeNumber);
@@ -109,7 +109,7 @@ bool isConnected(graph &g)
       }
    }
 
-   if (g.numComponents>1)
+   if (numComponents>1)
       return false;
    else
       return true;
@@ -125,7 +125,7 @@ int main()
    // Read the name of the graph from the keyboard or
    // hard code it here for testing.
    
-   fileName = "graph1.txt";
+   fileName = "graph4.txt";
 
    //   cout << "Enter filename" << endl;
    //   cin >> fileName;
@@ -140,10 +140,10 @@ int main()
    try
 
    {
-      cout << "Reading graph" << endl;
+      cout << "\nReading original graph.\n" << endl;
       graph g(fin);
 
-      //cout << g;
+      cout << "\nThe Original Graph: \n"<<g<<"\n";
 	    
       bool connected;
       bool cyclic;
@@ -152,45 +152,49 @@ int main()
       cyclic = isCyclic(g,0);
 
       if (connected)
-	 cout << "Graph is connected" << endl;
+	 cout << "Original graph is connected." << endl;
       else
-	 cout << "Graph is not connected" << endl;
-
+	 cout << "Original graph is not connected." << endl;
       if (cyclic)
-	 cout << "Graph contains a cycle" << endl;
+	 cout << "Original graph contains a cycle." << endl;
       else
-	 cout << "Graph does not contain a cycle" << endl;
+	 cout << "Original graph does not contain a cycle." << endl;
 
       cout << endl;
      
-      cout << "Finding spanning forest" << endl;
-
+    
       // Initialize an empty graph to contain the spanning forest
       graph sf(g.numNodes());
       findSpanningForest(g,sf);
 
       cout << endl;
 
-      cout << sf;
-
+      cout << "Finding spanning forest" << endl;
+      cout <<"\nThe Spanning Forest: \n"<< sf;
       cout << "Spanning forest weight: " << sf.getTotalEdgeWeight()/2 << endl;
 
       //Can't do this in is Cyclic because that's recursive.
-         connected = isConnected(sf);
-         sf.clearMark();
-         sf.clearVisit();
-         cyclic = isCyclic(sf,0);
-         
+      cout << "\nThere are "<<numComponents<<" spanning trees in this spanning forest.";
+      
+      if ((sf.numNodes()-numComponents)==sf.numEdges())
+      {
+         cout <<"\n\nThe number of nodes ("<<sf.numNodes()<<") - the number of number of components ("<<numComponents<<") = number of edges("<<sf.numEdges()<<").\nTherefore, it's likely this is a noncycle spanning tree.\n\n";
+      }
+      connected = isConnected(sf);
+      sf.clearMark();
+      sf.clearVisit();
+      cyclic = isCyclic(sf,0);
+      
       
       if (connected)
-	 cout << "Graph is connected" << endl;
+	 cout << "\nSpanning forest is connected" << endl;
       else
-	 cout << "Graph is not connected" << endl;
+	 cout << "\nSpanning forest is not connected" << endl;
 
       if (cyclic)
-	 cout << "Graph contains a cycle" << endl;
+	 cout << "Spanning forest contains a cycle" << endl;
       else
-	 cout << "Graph does not contain a cycle" << endl;
+	 cout << "Spanning forest does not contain a cycle" << endl;
 
       cout << endl;
    }    
