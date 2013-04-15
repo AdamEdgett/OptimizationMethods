@@ -12,6 +12,7 @@
 #include "graph.h"
 #include <queue>
 #include <vector>
+#include <cstdlib>
 
 using namespace std;
 
@@ -66,6 +67,7 @@ void findSpanningForest(graph &g, graph &sf)
                {
                   g.mark(currentNode,i);
                   sf.addEdge(currentNode,i);
+                  sf.setEdgeWeight(currentNode, i, g.getEdgeWeight(currentNode, i));
                   g.visit(i);
                   currentMoves.push(i);
                }
@@ -75,13 +77,11 @@ void findSpanningForest(graph &g, graph &sf)
    }
 }
 
-
-bool isConnected(graph &g)
-// Returns true if the graph g is connected.  Otherwise returns false.
+int getNumComponents(graph &g)
 {
    g.clearMark();
    g.clearVisit();
-   numComponents=0;
+   int numComponents = 0;
    queue<int> currentMoves;
    for (int n=0;n<g.numNodes();n++)
    {
@@ -108,13 +108,98 @@ bool isConnected(graph &g)
          }
       }
    }
+   return numComponents;
+}
 
-   if (numComponents>1)
+bool isConnected(graph &g)
+// Returns true if the graph g is connected.  Otherwise returns false.
+{   
+   if (getNumComponents(g) > 1)
       return false;
    else
       return true;
    
 }
+
+void prim(graph &g, graph &sf)
+// Given a weighted graph g, sets sf equal to a minimum spanning
+// forest on g. Uses Prim's algorithm.
+{
+   g.clearMark();
+   g.clearVisit();
+   numComponents=0;
+   int currentNode = 0;
+   while(!g.allNodesVisited())
+   {
+      // find next currentNode
+      while(g.isVisited(currentNode) && currentNode < g.numNodes())
+      {
+         currentNode++;
+      }
+      g.visit(currentNode);
+      int smallestEdgeWeight = -1;
+      int smallestEdgeNode = -1;
+      // find shortest new edge from currentNode
+      for(int i = 0; i < g.numNodes(); i++)
+      {
+         if(g.isEdge(currentNode, i))
+         {
+            if(g.getEdgeWeight(currentNode, i) < smallestEdgeWeight 
+               || smallestEdgeWeight == -1)
+            {
+               smallestEdgeWeight = g.getEdgeWeight(currentNode, i);
+               smallestEdgeNode = i;
+            }
+         }
+      }
+      // add the new edge
+      g.visit(smallestEdgeNode);
+      sf.addEdge(currentNode, smallestEdgeNode);
+      sf.setEdgeWeight(currentNode, smallestEdgeNode, smallestEdgeWeight);
+   }
+   numComponents = getNumComponents(sf);
+}
+
+void kruskal(graph &g, graph &sf)
+// Given a weighted graph g, sets sf equal to a minimum spanning
+// forest on g. Uses Kruskal's algorithm.
+{
+   g.clearMark();
+   g.clearVisit();
+   numComponents=0;
+   while(!g.allNodesVisited())
+   {
+      // find the smallest edge
+      int smallestEdgeWeight = -1;
+      int smallestEdgeBeg = -1;
+      int smallestEdgeEnd = -1;
+      for(int i = 0; i < g.numNodes(); i++)
+      {
+         for(int j = 0; j < g.numNodes(); j++)
+         {
+            if(g.isEdge(i, j) && !g.isVisited(i, j) && !g.isVisited(j, i)
+               && (!g.isVisited(i) || !g.isVisited(j)))
+            {
+               if(g.getEdgeWeight(i, j) < smallestEdgeWeight 
+                  || smallestEdgeWeight == -1)
+               {
+                  smallestEdgeWeight = g.getEdgeWeight(i, j);
+                  smallestEdgeBeg = i;
+                  smallestEdgeEnd = j;
+               }
+            }
+         }
+      }
+      // add the new edge
+      g.visit(smallestEdgeBeg);
+      g.visit(smallestEdgeEnd);
+      g.visit(smallestEdgeBeg, smallestEdgeEnd);
+      sf.addEdge(smallestEdgeBeg, smallestEdgeEnd);
+      sf.setEdgeWeight(smallestEdgeBeg, smallestEdgeEnd, smallestEdgeWeight);
+   }
+   numComponents = getNumComponents(sf);
+}
+
 int main()
 {
    char x;
@@ -161,21 +246,25 @@ int main()
 	 cout << "Original graph does not contain a cycle." << endl;
 
       cout << endl;
-     
-    
-      // Initialize an empty graph to contain the spanning forest
+      
+      cout << "Original Algorithm\n";
       graph sf(g.numNodes());
-      findSpanningForest(g,sf);
+      findSpanningForest(g, sf);
+      int originalWeight = sf.getTotalEdgeWeight();       
+
+      cout << "Prim's Algorithm\n";
+      // Initialize an empty graph to contain the spanning forest
+      sf = graph(g.numNodes());
+      prim(g,sf);
 
       cout << endl;
 
       cout << "Finding spanning forest" << endl;
       cout <<"\nThe Spanning Forest: \n"<< sf;
-      cout << "Spanning forest weight: " << sf.getTotalEdgeWeight()/2 << endl;
-
-      //Can't do this in is Cyclic because that's recursive.
+      cout << "Spanning forest weight: " << sf.getTotalEdgeWeight() << endl;
+      cout << "This is " << originalWeight - sf.getTotalEdgeWeight() << " edges cheaper than the original algorithm\n";
       cout << "\nThere are "<<numComponents<<" spanning trees in this spanning forest.";
-      
+
       if ((sf.numNodes()-numComponents)==sf.numEdges())
       {
          cout <<"\n\nThe number of nodes ("<<sf.numNodes()<<") - the number of number of components ("<<numComponents<<") = number of edges("<<sf.numEdges()<<").\nTherefore, it's likely this is a noncycle spanning tree.\n\n";
@@ -196,6 +285,47 @@ int main()
       else
 	 cout << "Spanning forest does not contain a cycle" << endl;
 
+      cout << endl;
+
+
+      cout << "Kruskal's Algorithm\n";
+      // Initialize an empty graph to contain the spanning forest
+      sf = graph(g.numNodes());
+      kruskal(g,sf);
+
+      cout << endl;
+
+      cout << "Finding spanning forest" << endl;
+      cout <<"\nThe Spanning Forest: \n"<< sf;
+      cout << "Spanning forest weight: " << sf.getTotalEdgeWeight() << endl;
+      cout << "This is " << originalWeight - sf.getTotalEdgeWeight() << " edges cheaper than the original algorithm\n";
+      cout << "\nThere are "<<numComponents<<" spanning trees in this spanning forest.";
+
+      if ((sf.numNodes()-numComponents)==sf.numEdges())
+      {
+         cout <<"\n\nThe number of nodes ("<<sf.numNodes()<<") - the number of number of components ("<<numComponents<<") = number of edges("<<sf.numEdges()<<").\nTherefore, it's likely this is a noncycle spanning tree.\n\n";
+      }
+      connected = isConnected(sf);
+      sf.clearMark();
+      sf.clearVisit();
+      cyclic = isCyclic(sf,0);
+      
+      
+      if (connected)
+    cout << "\nSpanning forest is connected" << endl;
+      else
+    cout << "\nSpanning forest is not connected" << endl;
+
+      if (cyclic)
+    cout << "Spanning forest contains a cycle" << endl;
+      else
+    cout << "Spanning forest does not contain a cycle" << endl;
+
+      cout << "\n\n";
+      cout << "Because of the way that the kruskal algorithm works on spanning forests,\n";
+      cout << "it does not seem to find the minimum tree\n";
+      cout << "(it adds edges that connect components that don't need to be connected).\n";
+      cout << "If this was looking for a minimum tree, this would work correctly.";
       cout << endl;
    }    
    catch (indexRangeError &ex) 
