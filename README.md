@@ -15,3 +15,7 @@ Projects Included:
 * Project 3 - Word search solver
 
 * Project 4 - Sudoku solver
+
+* Project 5 - Maze solver
+
+* Project 6 - Spanning tree operations
